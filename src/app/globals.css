@@ -3,6 +3,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  --font-heading: "Segoe UI", "Arial", sans-serif;
+  --font-body: "Helvetica Neue", "Arial", sans-serif;
   --background: oklch(0.98 0.01 95);
   --foreground: oklch(0.22 0.03 95);
   --card: oklch(1 0 0);

@@ -1,70 +1,71 @@
 "use client";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { getLevelFromXp } from "@/lib/gamification";
-import type { Database } from "@/lib/database.types";
+import { createDefaultProfile, storage } from "@/lib/storage";
 import type { Profile } from "@/lib/types";
 
-type ProfileRow = Pick<
-  Database["public"]["Tables"]["profiles"]["Row"],
-  "id" | "display_name" | "level" | "xp"
->;
+const getIsoDate = (offsetDays = 0): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + offsetDays);
+  return date.toISOString().slice(0, 10);
+};
 
-const mapProfile = (row: ProfileRow): Profile => {
+const normalizeProfile = (profile: Profile | null): Profile => {
   return {
-    id: row.id,
-    display_name: row.display_name,
-    level: row.level,
-    xp: row.xp,
+    ...createDefaultProfile(),
+    ...(profile ?? {}),
   };
 };
 
-export const getOrCreateProfile = async (
-  client: SupabaseClient<Database>,
-  userId: string,
-): Promise<Profile> => {
-  const profileResult = await (client as any).from("profiles").select("id,display_name,level,xp").eq("id", userId).maybeSingle();
+export const getOrCreateProfile = async (): Promise<Profile> => {
+  const profileResult = await storage.profile.get();
 
   if (profileResult.error) {
     throw new Error(profileResult.error.message);
   }
 
   if (profileResult.data) {
-    return mapProfile(profileResult.data);
+    return normalizeProfile(profileResult.data);
   }
 
-  const insertResult = await (client as any)
-    .from("profiles")
-    .insert({ id: userId, level: 1, xp: 0 })
-    .select("id,display_name,level,xp")
-    .single();
+  const insertResult = await storage.profile.upsert(createDefaultProfile());
 
   if (insertResult.error) {
     throw new Error(insertResult.error.message);
   }
 
-  return mapProfile(insertResult.data);
+  return insertResult.data;
 };
 
-export const awardXp = async (
-  client: SupabaseClient<Database>,
-  userId: string,
-  amount: number,
-): Promise<Profile> => {
-  const profile = await getOrCreateProfile(client, userId);
+const getNextStreakDays = (profile: Profile, today: string): number => {
+  if (profile.last_active_date === today) {
+    return profile.streak_days;
+  }
+
+  if (profile.last_active_date === getIsoDate(-1)) {
+    return Math.max(1, profile.streak_days + 1);
+  }
+
+  return 1;
+};
+
+export const awardXp = async (amount: number): Promise<Profile> => {
+  const profile = await getOrCreateProfile();
   const nextXp = Math.max(0, profile.xp + amount);
   const nextLevel = getLevelFromXp(nextXp);
+  const today = getIsoDate();
 
-  const updateResult = await (client as any)
-    .from("profiles")
-    .update({ xp: nextXp, level: nextLevel })
-    .eq("id", userId)
-    .select("id,display_name,level,xp")
-    .single();
+  const updateResult = await storage.profile.upsert({
+    ...profile,
+    xp: nextXp,
+    level: nextLevel,
+    streak_days: getNextStreakDays(profile, today),
+    last_active_date: today,
+  });
 
   if (updateResult.error) {
     throw new Error(updateResult.error.message);
   }
 
-  return mapProfile(updateResult.data);
+  return updateResult.data;
 };

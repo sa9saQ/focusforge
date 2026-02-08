@@ -2,26 +2,21 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AiBreakdownPanel } from "@/components/dashboard/ai-breakdown-panel";
 import { PomodoroPanel } from "@/components/dashboard/pomodoro-panel";
 import { TaskPanel } from "@/components/dashboard/task-panel";
 import { XpCard } from "@/components/dashboard/xp-card";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { POMODORO_COMPLETE_XP, TASK_COMPLETE_XP } from "@/lib/gamification";
 import { awardXp, getOrCreateProfile } from "@/lib/profile";
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { createTask, listTasks, removeTask, updateTaskStatus } from "@/lib/tasks";
 import type { Profile, SubtaskSuggestion, Task } from "@/lib/types";
 
 export const DashboardShell = (): React.ReactElement => {
-  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isMutating, setIsMutating] = useState(false);
   const [pendingTaskId, setPendingTaskId] = useState<string | null>(null);
@@ -31,74 +26,44 @@ export const DashboardShell = (): React.ReactElement => {
     setStatusMessage("");
   }, []);
 
-  const refreshData = useCallback(
-    async (currentUserId: string): Promise<void> => {
-      const supabase = getSupabaseBrowserClient();
-      const [nextProfile, nextTasks] = await Promise.all([
-        getOrCreateProfile(supabase, currentUserId),
-        listTasks(supabase, currentUserId),
-      ]);
-
-      setProfile(nextProfile);
-      setTasks(nextTasks);
-    },
-    [],
-  );
+  const refreshData = useCallback(async (): Promise<void> => {
+    const [nextProfile, nextTasks] = await Promise.all([getOrCreateProfile(), listTasks()]);
+    setProfile(nextProfile);
+    setTasks(nextTasks);
+  }, []);
 
   useEffect(() => {
-    let unsubscribeAuth: (() => void) | null = null;
+    let isMounted = true;
 
     const initialize = async (): Promise<void> => {
       try {
-        const supabase = getSupabaseBrowserClient();
-        const sessionResult = await supabase.auth.getSession();
-        const currentUser = sessionResult.data.session?.user;
-
-        if (!currentUser) {
-          router.replace("/login");
-          return;
-        }
-
-        setUserId(currentUser.id);
-        await refreshData(currentUser.id);
-
-        const {
-          data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-          if (!session?.user) {
-            router.replace("/login");
-          }
-        });
-        unsubscribeAuth = () => subscription.unsubscribe();
+        await refreshData();
       } catch (error: unknown) {
         console.error("Dashboard initialization failed", { error });
-        setStatusMessage(error instanceof Error ? error.message : "Unable to load dashboard.");
+        if (isMounted) {
+          setStatusMessage(error instanceof Error ? error.message : "Unable to load dashboard.");
+        }
       } finally {
-        setIsInitialLoading(false);
+        if (isMounted) {
+          setIsInitialLoading(false);
+        }
       }
     };
 
     void initialize();
 
     return () => {
-      if (unsubscribeAuth) {
-        unsubscribeAuth();
-      }
+      isMounted = false;
     };
-  }, [refreshData, router]);
+  }, [refreshData]);
 
   const handleCreateTask = useCallback(
     async (title: string): Promise<void> => {
-      if (!userId) {
-        return;
-      }
-
       clearStatus();
       setIsMutating(true);
 
       try {
-        const supabase = getSupabaseBrowserClient();
-        const createdTask = await createTask(supabase, { userId, title });
+        const createdTask = await createTask({ title });
         setTasks((previousTasks) => [createdTask, ...previousTasks]);
       } catch (error: unknown) {
         console.error("Create task failed", { error });
@@ -107,27 +72,22 @@ export const DashboardShell = (): React.ReactElement => {
         setIsMutating(false);
       }
     },
-    [clearStatus, userId],
+    [clearStatus],
   );
 
   const handleToggleTask = useCallback(
     async (task: Task, completed: boolean): Promise<void> => {
-      if (!userId) {
-        return;
-      }
-
       clearStatus();
       setPendingTaskId(task.id);
 
       try {
-        const supabase = getSupabaseBrowserClient();
         const nextStatus = completed ? "completed" : "pending";
-        const updatedTask = await updateTaskStatus(supabase, { taskId: task.id, status: nextStatus });
+        const updatedTask = await updateTaskStatus({ taskId: task.id, status: nextStatus });
 
         setTasks((previousTasks) => previousTasks.map((existingTask) => (existingTask.id === updatedTask.id ? updatedTask : existingTask)));
 
         if (completed && task.status !== "completed") {
-          const updatedProfile = await awardXp(supabase, userId, task.xp_reward || TASK_COMPLETE_XP);
+          const updatedProfile = await awardXp(task.xp_reward || TASK_COMPLETE_XP);
           setProfile(updatedProfile);
         }
       } catch (error: unknown) {
@@ -137,7 +97,7 @@ export const DashboardShell = (): React.ReactElement => {
         setPendingTaskId(null);
       }
     },
-    [clearStatus, userId],
+    [clearStatus],
   );
 
   const handleDeleteTask = useCallback(
@@ -146,8 +106,7 @@ export const DashboardShell = (): React.ReactElement => {
       setPendingTaskId(taskId);
 
       try {
-        const supabase = getSupabaseBrowserClient();
-        await removeTask(supabase, taskId);
+        await removeTask(taskId);
         setTasks((previousTasks) => previousTasks.filter((task) => task.id !== taskId));
       } catch (error: unknown) {
         console.error("Delete task failed", { error, taskId });
@@ -161,19 +120,13 @@ export const DashboardShell = (): React.ReactElement => {
 
   const handleCreateSuggestedTasks = useCallback(
     async (suggestions: SubtaskSuggestion[]): Promise<void> => {
-      if (!userId) {
-        return;
-      }
-
       clearStatus();
       setIsMutating(true);
 
       try {
-        const supabase = getSupabaseBrowserClient();
         const created = await Promise.all(
           suggestions.map((suggestion) =>
-            createTask(supabase, {
-              userId,
+            createTask({
               title: suggestion.title,
               aiGenerated: true,
             }),
@@ -188,34 +141,18 @@ export const DashboardShell = (): React.ReactElement => {
         setIsMutating(false);
       }
     },
-    [clearStatus, userId],
+    [clearStatus],
   );
 
   const handlePomodoroCompleted = useCallback(async (): Promise<void> => {
-    if (!userId) {
-      return;
-    }
-
     try {
-      const supabase = getSupabaseBrowserClient();
-      const updatedProfile = await awardXp(supabase, userId, POMODORO_COMPLETE_XP);
+      const updatedProfile = await awardXp(POMODORO_COMPLETE_XP);
       setProfile(updatedProfile);
     } catch (error: unknown) {
       console.error("Award pomodoro XP failed", { error });
       setStatusMessage(error instanceof Error ? error.message : "Unable to add XP for pomodoro.");
     }
-  }, [userId]);
-
-  const signOut = useCallback(async (): Promise<void> => {
-    try {
-      const supabase = getSupabaseBrowserClient();
-      await supabase.auth.signOut();
-      router.replace("/login");
-    } catch (error: unknown) {
-      console.error("Sign out failed", { error });
-      setStatusMessage(error instanceof Error ? error.message : "Unable to sign out.");
-    }
-  }, [router]);
+  }, []);
 
   const totalTasks = useMemo(() => tasks.length, [tasks]);
   const completedTasks = useMemo(() => tasks.filter((task) => task.status === "completed").length, [tasks]);
@@ -241,13 +178,7 @@ export const DashboardShell = (): React.ReactElement => {
             {completedTasks}/{totalTasks} tasks completed
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Button type="button" variant="outline" onClick={() => void signOut()}>
-            <LogOut className="size-4" />
-            Sign out
-          </Button>
-        </div>
+        <ThemeToggle />
       </header>
 
       <Separator className="my-4" />

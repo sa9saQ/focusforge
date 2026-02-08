@@ -17,6 +17,8 @@ export type Profile = {
   display_name: string | null;
   level: number;
   xp: number;
+  streak_days: number;
+  last_active_date: string | null;
 };
 
 export type SubtaskSuggestion = {

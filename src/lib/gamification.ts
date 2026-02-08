@@ -1,3 +1,5 @@
+import { createDefaultProfile, storage } from "@/lib/storage";
+
 export const TASK_COMPLETE_XP = 10;
 export const POMODORO_COMPLETE_XP = 15;
 
@@ -42,4 +44,32 @@ export const getXpProgress = (
     nextLevelXp,
     progressPercent: Math.max(0, Math.min(100, progressPercent)),
   };
+};
+
+export const getStoredXp = async (): Promise<number> => {
+  const result = await storage.profile.get();
+
+  if (result.error || !result.data) {
+    return 0;
+  }
+
+  return Math.max(0, result.data.xp);
+};
+
+export const setStoredXp = async (xp: number): Promise<number> => {
+  const normalizedXp = Math.max(0, xp);
+  const currentResult = await storage.profile.get();
+  const currentProfile = currentResult.data ?? createDefaultProfile();
+  const nextLevel = getLevelFromXp(normalizedXp);
+  const nextResult = await storage.profile.upsert({
+    ...currentProfile,
+    xp: normalizedXp,
+    level: nextLevel,
+  });
+
+  if (nextResult.error) {
+    throw new Error(nextResult.error.message);
+  }
+
+  return nextLevel;
 };

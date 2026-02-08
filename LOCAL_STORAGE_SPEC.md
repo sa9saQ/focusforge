@@ -50,10 +50,17 @@ This allows immediate deployment and usage without any backend setup.
 - Must build successfully (`pnpm build`)
 - Must work in browser without any backend
 
+## UI Language: 日本語
+- ALL user-facing text must be in Japanese
+- Landing page: タイトル、説明、ボタン
+- Dashboard: タスク管理、ポモドーロ、XP
+- Login page: 「はじめる」ボタン
+- Error messages: 日本語
+
 ## Testing
 - `pnpm build` must pass
 - Opening localhost:3001 should show landing page
-- Clicking "Get Started" goes to dashboard
+- Clicking "はじめる" goes to dashboard
 - Can add, complete, delete tasks
 - Pomodoro timer works
 - XP tracking works
