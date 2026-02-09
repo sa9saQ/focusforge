@@ -116,10 +116,17 @@ export const DashboardShell = (): React.ReactElement => {
           setCelebrationEvent({ taskId: task.id, token: Date.now() });
         }
 
-        if (!completed && task.status === "completed" && task.completed_at) {
-          const completionDateKey = getDateKeyFromTimestamp(task.completed_at);
-          const nextStreakCounts = await adjustDailyCompletionCount(completionDateKey, -1);
-          setStreakCounts(nextStreakCounts);
+        if (!completed && task.status === "completed") {
+          // Deduct XP when uncompleting a task
+          const xpToDeduct = task.xp_reward || TASK_COMPLETE_XP;
+          const deductedProfile = await awardXp(-xpToDeduct);
+          setProfile(deductedProfile);
+
+          if (task.completed_at) {
+            const completionDateKey = getDateKeyFromTimestamp(task.completed_at);
+            const nextStreakCounts = await adjustDailyCompletionCount(completionDateKey, -1);
+            setStreakCounts(nextStreakCounts);
+          }
         }
       } catch (error: unknown) {
         console.error("Toggle task failed", { error, taskId: task.id, completed });
