@@ -53,7 +53,7 @@ export default function Home(): React.ReactElement {
 
         <Card className="flex-1 border-accent/50 bg-card/80 backdrop-blur">
           <CardContent className="space-y-4 p-6">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-accent-foreground">Daily Loop</p>
+            <p className="text-sm font-medium uppercase tracking-[0.2em] text-foreground">Daily Loop</p>
             <ol className="space-y-3 text-sm">
               <li>1. Add one task you care about.</li>
               <li>2. Break it down with AI suggestions.</li>
