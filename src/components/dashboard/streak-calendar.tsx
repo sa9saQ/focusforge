@@ -1,3 +1,4 @@
+import { Flame } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { DailyCompletionCounts } from "@/lib/storage";
 import { getDateKeyFromDate } from "@/lib/streaks";
@@ -31,13 +32,39 @@ const buildCalendarDays = (counts: DailyCompletionCounts): CalendarDay[] => {
   });
 };
 
+const getCurrentStreakCount = (counts: DailyCompletionCounts): number => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let streak = 0;
+
+  for (let index = 0; index < 365; index += 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() - index);
+    const dateKey = getDateKeyFromDate(date);
+
+    if ((counts[dateKey] ?? 0) > 0) {
+      streak += 1;
+      continue;
+    }
+
+    break;
+  }
+
+  return streak;
+};
+
 const getCompletionTone = (completedCount: number): string => {
   if (completedCount >= 3) {
-    return "border-emerald-700/80 bg-emerald-600 dark:border-emerald-400/70 dark:bg-emerald-400";
+    return "border-emerald-700/80 bg-emerald-600 dark:border-emerald-400/80 dark:bg-emerald-400";
+  }
+
+  if (completedCount >= 2) {
+    return "border-emerald-500/70 bg-emerald-400 dark:border-emerald-500/80 dark:bg-emerald-500";
   }
 
   if (completedCount >= 1) {
-    return "border-emerald-400/70 bg-emerald-300 dark:border-emerald-600/70 dark:bg-emerald-700";
+    return "border-emerald-300/80 bg-emerald-200 dark:border-emerald-700/80 dark:bg-emerald-700";
   }
 
   return "border-border/80 bg-muted/60";
@@ -45,23 +72,37 @@ const getCompletionTone = (completedCount: number): string => {
 
 export const StreakCalendar = ({ counts }: StreakCalendarProps): React.ReactElement => {
   const calendarDays = buildCalendarDays(counts);
+  const currentStreak = getCurrentStreakCount(counts);
 
   return (
     <Card>
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-xl">Streak Calendar</CardTitle>
+      <CardHeader className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="text-xl">Streak Calendar</CardTitle>
+          <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+            <Flame className="size-4" /> {currentStreak > 0 ? `${currentStreak} day streak!` : "Start your streak today"}
+          </p>
+        </div>
         <CardDescription>Tasks completed in the last 4 weeks.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-flow-col grid-rows-7 justify-start gap-1.5">
+      <CardContent className="space-y-4">
+        <div className="grid grid-flow-col grid-rows-7 justify-start gap-1.5 overflow-x-auto pb-2">
           {calendarDays.map((day) => {
             return (
-              <div
-                key={day.dateKey}
-                className={cn("size-5 rounded-sm border", getCompletionTone(day.completedCount))}
-                title={`${day.label}: ${day.completedCount} completed`}
-                aria-label={`${day.label}, ${day.completedCount} tasks completed`}
-              />
+              <div key={day.dateKey} className="group relative">
+                <button
+                  type="button"
+                  className={cn(
+                    "size-5 rounded-sm border transition-transform duration-150 group-hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    getCompletionTone(day.completedCount),
+                  )}
+                  title={`${day.label}: ${day.completedCount} completed`}
+                  aria-label={`${day.label}, ${day.completedCount} tasks completed`}
+                />
+                <div className="pointer-events-none absolute bottom-[120%] left-1/2 z-10 hidden -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1 text-[11px] text-popover-foreground shadow-sm group-hover:block">
+                  {day.label}: {day.completedCount}
+                </div>
+              </div>
             );
           })}
         </div>
@@ -70,8 +111,9 @@ export const StreakCalendar = ({ counts }: StreakCalendarProps): React.ReactElem
           <span>Less</span>
           <div className="flex items-center gap-1.5">
             <span className="h-3 w-3 rounded-[3px] border border-border/80 bg-muted/60" />
-            <span className="h-3 w-3 rounded-[3px] border border-emerald-400/70 bg-emerald-300 dark:border-emerald-600/70 dark:bg-emerald-700" />
-            <span className="h-3 w-3 rounded-[3px] border border-emerald-700/80 bg-emerald-600 dark:border-emerald-400/70 dark:bg-emerald-400" />
+            <span className="h-3 w-3 rounded-[3px] border border-emerald-300/80 bg-emerald-200 dark:border-emerald-700/80 dark:bg-emerald-700" />
+            <span className="h-3 w-3 rounded-[3px] border border-emerald-500/70 bg-emerald-400 dark:border-emerald-500/80 dark:bg-emerald-500" />
+            <span className="h-3 w-3 rounded-[3px] border border-emerald-700/80 bg-emerald-600 dark:border-emerald-400/80 dark:bg-emerald-400" />
           </div>
           <span>More</span>
         </div>

@@ -3,50 +3,93 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --font-heading: "Segoe UI", "Arial", sans-serif;
-  --font-body: "Helvetica Neue", "Arial", sans-serif;
-  --background: oklch(0.98 0.01 95);
-  --foreground: oklch(0.22 0.03 95);
+  color-scheme: light dark;
+  --font-heading: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+  --background: oklch(0.99 0.01 310);
+  --foreground: oklch(0.24 0.04 290);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.03 95);
+  --card-foreground: oklch(0.24 0.04 290);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.03 95);
-  --primary: oklch(0.61 0.13 145);
-  --primary-foreground: oklch(0.98 0.01 95);
-  --secondary: oklch(0.9 0.03 85);
-  --secondary-foreground: oklch(0.28 0.03 80);
-  --muted: oklch(0.95 0.02 90);
-  --muted-foreground: oklch(0.48 0.03 85);
-  --accent: oklch(0.86 0.1 65);
-  --accent-foreground: oklch(0.29 0.05 62);
-  --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.96 0 0);
-  --border: oklch(0.85 0.02 90);
-  --input: oklch(0.85 0.02 90);
-  --ring: oklch(0.61 0.13 145);
-  --radius: 0.75rem;
+  --popover-foreground: oklch(0.24 0.04 290);
+  --primary: oklch(0.58 0.19 300);
+  --primary-foreground: oklch(0.98 0.01 300);
+  --secondary: oklch(0.94 0.02 300);
+  --secondary-foreground: oklch(0.28 0.04 290);
+  --muted: oklch(0.96 0.01 290);
+  --muted-foreground: oklch(0.47 0.03 290);
+  --accent: oklch(0.92 0.03 300);
+  --accent-foreground: oklch(0.28 0.06 290);
+  --destructive: oklch(0.62 0.22 24);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.88 0.02 290);
+  --input: oklch(0.88 0.02 290);
+  --ring: oklch(0.58 0.19 300);
+  --radius: 0.85rem;
 }
 
 .dark {
-  --background: oklch(0.18 0.02 90);
-  --foreground: oklch(0.95 0.01 92);
-  --card: oklch(0.24 0.02 90);
-  --card-foreground: oklch(0.95 0.01 92);
-  --popover: oklch(0.22 0.02 90);
-  --popover-foreground: oklch(0.95 0.01 92);
-  --primary: oklch(0.72 0.16 145);
-  --primary-foreground: oklch(0.16 0.01 90);
-  --secondary: oklch(0.32 0.03 90);
-  --secondary-foreground: oklch(0.95 0.01 92);
-  --muted: oklch(0.3 0.02 90);
-  --muted-foreground: oklch(0.72 0.02 90);
-  --accent: oklch(0.65 0.12 62);
-  --accent-foreground: oklch(0.19 0.01 90);
-  --destructive: oklch(0.7 0.19 24);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.38 0.02 90);
-  --input: oklch(0.38 0.02 90);
-  --ring: oklch(0.72 0.16 145);
+  --background: oklch(0.18 0.02 290);
+  --foreground: oklch(0.95 0.01 295);
+  --card: oklch(0.24 0.02 292);
+  --card-foreground: oklch(0.95 0.01 295);
+  --popover: oklch(0.24 0.02 292);
+  --popover-foreground: oklch(0.95 0.01 295);
+  --primary: oklch(0.73 0.19 300);
+  --primary-foreground: oklch(0.19 0.02 290);
+  --secondary: oklch(0.32 0.03 292);
+  --secondary-foreground: oklch(0.95 0.01 295);
+  --muted: oklch(0.31 0.02 290);
+  --muted-foreground: oklch(0.74 0.03 290);
+  --accent: oklch(0.38 0.06 292);
+  --accent-foreground: oklch(0.92 0.01 300);
+  --destructive: oklch(0.7 0.2 24);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.38 0.02 292);
+  --input: oklch(0.38 0.02 292);
+  --ring: oklch(0.73 0.19 300);
+}
+
+html[data-accent="blue"] {
+  --primary: oklch(0.58 0.16 245);
+  --ring: oklch(0.58 0.16 245);
+  --accent: oklch(0.91 0.03 245);
+  --accent-foreground: oklch(0.29 0.08 245);
+}
+
+html.dark[data-accent="blue"] {
+  --primary: oklch(0.72 0.16 245);
+  --ring: oklch(0.72 0.16 245);
+  --accent: oklch(0.4 0.08 245);
+  --accent-foreground: oklch(0.94 0.02 245);
+}
+
+html[data-accent="green"] {
+  --primary: oklch(0.62 0.14 150);
+  --ring: oklch(0.62 0.14 150);
+  --accent: oklch(0.92 0.04 150);
+  --accent-foreground: oklch(0.3 0.07 150);
+}
+
+html.dark[data-accent="green"] {
+  --primary: oklch(0.75 0.16 150);
+  --ring: oklch(0.75 0.16 150);
+  --accent: oklch(0.42 0.08 150);
+  --accent-foreground: oklch(0.95 0.02 150);
+}
+
+html[data-accent="orange"] {
+  --primary: oklch(0.66 0.16 55);
+  --ring: oklch(0.66 0.16 55);
+  --accent: oklch(0.93 0.05 55);
+  --accent-foreground: oklch(0.31 0.08 55);
+}
+
+html.dark[data-accent="orange"] {
+  --primary: oklch(0.78 0.16 55);
+  --ring: oklch(0.78 0.16 55);
+  --accent: oklch(0.44 0.08 55);
+  --accent-foreground: oklch(0.97 0.02 55);
 }
 
 @theme inline {
@@ -80,22 +123,59 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
-    background-image: radial-gradient(
-      circle at 20% 0%,
-      oklch(0.96 0.03 90 / 0.65),
-      transparent 45%
-    );
+    font-size: 16px;
     min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 0% 0%, oklch(0.92 0.06 300 / 0.35), transparent 38%),
+      radial-gradient(circle at 100% 20%, oklch(0.94 0.03 250 / 0.3), transparent 42%);
   }
 
   .dark body {
-    background-image: radial-gradient(
-      circle at 80% 0%,
-      oklch(0.3 0.04 145 / 0.3),
-      transparent 40%
-    );
+    background-image:
+      radial-gradient(circle at 0% 0%, oklch(0.42 0.11 300 / 0.35), transparent 42%),
+      radial-gradient(circle at 100% 20%, oklch(0.36 0.08 250 / 0.28), transparent 42%);
+  }
+}
+
+@keyframes hero-fade-up {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes route-fade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes checkbox-bounce {
+  0% {
+    transform: scale(0.78);
+  }
+
+  55% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -113,20 +193,6 @@
   100% {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes task-check-pop {
-  0% {
-    transform: scale(0.75);
-  }
-
-  55% {
-    transform: scale(1.18);
-  }
-
-  100% {
-    transform: scale(1);
   }
 }
 
@@ -154,13 +220,58 @@
   }
 }
 
+@keyframes toast-slide-in {
+  0% {
+    transform: translateY(-8px) scale(0.98);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes confetti-burst {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(0.5);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--confetti-x), var(--confetti-y)) rotate(240deg) scale(1);
+    opacity: 0;
+  }
+}
+
 @layer utilities {
+  .route-fade-in {
+    animation: route-fade 280ms ease-out;
+  }
+
+  .hero-entrance {
+    opacity: 0;
+    animation: hero-fade-up 560ms ease-out forwards;
+  }
+
+  .hero-entrance-delay {
+    animation-delay: 120ms;
+  }
+
+  .hero-entrance-delay-2 {
+    animation-delay: 220ms;
+  }
+
+  .toast-item {
+    animation: toast-slide-in 220ms ease-out;
+  }
+
   .task-item-celebrating {
     animation: task-item-pop 420ms ease-out;
   }
 
   .task-checkbox-celebrating[data-state="checked"] {
-    animation: task-check-pop 420ms ease-out;
+    animation: checkbox-bounce 420ms ease-out;
   }
 
   .task-checkbox-celebrating[data-state="checked"] svg {
@@ -174,7 +285,7 @@
     height: 6px;
     width: 6px;
     border-radius: 9999px;
-    background: oklch(0.83 0.16 138);
+    background: var(--primary);
     opacity: 0;
     pointer-events: none;
     animation: task-sparkle-burst 560ms ease-out forwards;
@@ -199,13 +310,58 @@
     --sparkle-x: 16px;
     --sparkle-y: 12px;
   }
+
+  .xp-confetti-piece {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 10px;
+    border-radius: 9999px;
+    transform-origin: center;
+    animation: confetti-burst 700ms ease-out forwards;
+  }
+
+  .xp-confetti-one {
+    --confetti-x: -28px;
+    --confetti-y: -34px;
+  }
+
+  .xp-confetti-two {
+    --confetti-x: -4px;
+    --confetti-y: -36px;
+  }
+
+  .xp-confetti-three {
+    --confetti-x: 24px;
+    --confetti-y: -26px;
+  }
+
+  .xp-confetti-four {
+    --confetti-x: -20px;
+    --confetti-y: 26px;
+  }
+
+  .xp-confetti-five {
+    --confetti-x: 20px;
+    --confetti-y: 30px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .route-fade-in,
+  .hero-entrance,
+  .toast-item,
   .task-item-celebrating,
   .task-checkbox-celebrating[data-state="checked"],
   .task-checkbox-celebrating[data-state="checked"] svg,
-  .task-sparkle {
+  .task-sparkle,
+  .xp-confetti-piece {
     animation: none;
+    opacity: 1;
   }
 }

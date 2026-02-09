@@ -1,7 +1,7 @@
 "use client";
 
 import { LOCAL_USER_ID, storage } from "@/lib/storage";
-import type { Task } from "@/lib/types";
+import type { Task, TaskPriority } from "@/lib/types";
 
 const byCreatedAtDesc = (left: Task, right: Task): number => {
   return new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
@@ -17,7 +17,12 @@ export const listTasks = async (): Promise<Task[]> => {
   return [...result.data].sort(byCreatedAtDesc);
 };
 
-export const createTask = async (input: { title: string; parentTaskId?: string; aiGenerated?: boolean }): Promise<Task> => {
+export const createTask = async (input: {
+  title: string;
+  parentTaskId?: string;
+  aiGenerated?: boolean;
+  priority?: TaskPriority;
+}): Promise<Task> => {
   void input.aiGenerated;
   const result = await storage.tasks.insert({
     user_id: LOCAL_USER_ID,
@@ -25,6 +30,7 @@ export const createTask = async (input: { title: string; parentTaskId?: string; 
     description: null,
     parent_task_id: input.parentTaskId ?? null,
     status: "pending",
+    priority: input.priority ?? "medium",
     xp_reward: 10,
   });
 

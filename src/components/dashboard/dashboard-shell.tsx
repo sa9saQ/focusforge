@@ -12,7 +12,8 @@ import { XpCard } from "@/components/dashboard/xp-card";
 import { Separator } from "@/components/ui/separator";
 import { POMODORO_COMPLETE_XP, TASK_COMPLETE_XP } from "@/lib/gamification";
 import { awardXp, getOrCreateProfile } from "@/lib/profile";
-import type { DailyCompletionCounts } from "@/lib/storage";
+import type { DailyCompletionCounts, LocalSettings } from "@/lib/storage";
+import { DEFAULT_SETTINGS, storage } from "@/lib/storage";
 import { adjustDailyCompletionCount, getDailyCompletionCounts, getDateKeyFromTimestamp } from "@/lib/streaks";
 import { createTask, listTasks, removeTask, updateTaskStatus } from "@/lib/tasks";
 import type { Profile, SubtaskSuggestion, Task } from "@/lib/types";
@@ -26,17 +27,25 @@ export const DashboardShell = (): React.ReactElement => {
   const [streakCounts, setStreakCounts] = useState<DailyCompletionCounts>({});
   const [celebrationEvent, setCelebrationEvent] = useState<{ taskId: string; token: number } | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [settings, setSettings] = useState<LocalSettings>(DEFAULT_SETTINGS);
 
   const clearStatus = useCallback(() => {
     setStatusMessage("");
   }, []);
 
   const refreshData = useCallback(async (): Promise<void> => {
-    const [nextProfile, nextTasks, nextStreakCounts] = await Promise.all([getOrCreateProfile(), listTasks(), getDailyCompletionCounts()]);
+    const [nextProfile, nextTasks, nextStreakCounts, settingsResult] = await Promise.all([getOrCreateProfile(), listTasks(), getDailyCompletionCounts(), storage.settings.get()]);
     setProfile(nextProfile);
     setTasks(nextTasks);
     setStreakCounts(nextStreakCounts);
+    if (settingsResult.data) setSettings(settingsResult.data);
   }, []);
+
+  const handleUpdateSettings = useCallback(async (patch: Partial<LocalSettings>): Promise<void> => {
+    const next = { ...settings, ...patch };
+    await storage.settings.set(next);
+    setSettings(next);
+  }, [settings]);
 
   useEffect(() => {
     let isMounted = true;
@@ -222,9 +231,9 @@ export const DashboardShell = (): React.ReactElement => {
         </div>
 
         <div className="space-y-4">
-          <XpCard xp={profile?.xp ?? 0} />
+          <XpCard xp={profile?.xp ?? 0} dailyXp={profile?.daily_xp ?? 0} dailyXpGoal={100} />
           <StreakCalendar counts={streakCounts} />
-          <PomodoroPanel onWorkSessionCompleted={handlePomodoroCompleted} />
+          <PomodoroPanel onWorkSessionCompleted={handlePomodoroCompleted} settings={settings} onUpdateSettings={handleUpdateSettings} />
         </div>
       </section>
     </main>

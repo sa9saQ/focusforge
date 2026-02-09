@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+const inter = Inter({
+  variable: "--font-body",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "FocusForge",
@@ -25,7 +38,7 @@ export default function RootLayout({
 }>): React.ReactElement {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-[var(--font-body)]">
+      <body className={`${inter.variable} ${spaceGrotesk.variable} font-[var(--font-body)]`}>
         <Providers>{children}</Providers>
       </body>
     </html>

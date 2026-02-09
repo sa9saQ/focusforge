@@ -54,10 +54,13 @@ export const awardXp = async (amount: number): Promise<Profile> => {
   const nextXp = Math.max(0, profile.xp + amount);
   const nextLevel = getLevelFromXp(nextXp);
   const today = getIsoDate();
+  const isSameDay = profile.last_active_date === today;
+  const nextDailyXp = Math.max(0, (isSameDay ? profile.daily_xp : 0) + amount);
 
   const updateResult = await storage.profile.upsert({
     ...profile,
     xp: nextXp,
+    daily_xp: nextDailyXp,
     level: nextLevel,
     streak_days: getNextStreakDays(profile, today),
     last_active_date: today,
