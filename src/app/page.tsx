@@ -44,12 +44,9 @@ export default function Home(): React.ReactElement {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 w-full px-6 sm:w-auto">
               <Link href="/dashboard">
-                Start for free
+                Get started
                 <ArrowRight className="size-4" />
               </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="h-12 w-full px-6 sm:w-auto">
-              <Link href="/dashboard">Open dashboard</Link>
             </Button>
           </div>
         </div>
