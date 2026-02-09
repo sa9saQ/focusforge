@@ -75,8 +75,8 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI Breakdown (Mock)</CardTitle>
-        <CardDescription>Generate 3-5 small subtasks from any task title.</CardDescription>
+        <CardTitle>AI Breakdown</CardTitle>
+        <CardDescription>Break any task into 3-5 small, actionable steps.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row">

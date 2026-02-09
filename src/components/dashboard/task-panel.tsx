@@ -36,7 +36,7 @@ export const TaskPanel = ({ tasks, disabled = false, pendingTaskId = null, onCre
   };
 
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader>
         <CardTitle>Tasks</CardTitle>
         <CardDescription>Create, complete, and clear your list.</CardDescription>

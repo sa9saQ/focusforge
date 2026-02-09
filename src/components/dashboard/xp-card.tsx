@@ -30,8 +30,8 @@ export const XpCard = ({ xp }: XpCardProps): React.ReactElement => {
           {xpToNextLevel} XP to reach Level {level + 1}. ({xp - currentLevelXp} / {nextLevelXp - currentLevelXp})
         </p>
 
-        <p className="flex items-center gap-2 text-sm font-medium text-accent-foreground">
-          <Flame className="size-4 text-accent-foreground" /> Keep your streak by finishing one task today.
+        <p className="flex items-center gap-2 text-sm font-medium text-accent-foreground break-words">
+          <Flame className="size-4 shrink-0 text-accent-foreground" /> Keep your streak by finishing one task today.
         </p>
       </CardContent>
     </Card>

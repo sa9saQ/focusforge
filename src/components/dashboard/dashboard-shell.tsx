@@ -185,8 +185,8 @@ export const DashboardShell = (): React.ReactElement => {
 
       {statusMessage ? <p className="mb-3 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">{statusMessage}</p> : null}
 
-      <section className="grid gap-4 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-4 md:col-span-2 lg:col-span-2">
           <TaskPanel
             tasks={tasks}
             disabled={isMutating}

@@ -98,7 +98,7 @@ export const PomodoroPanel = ({ onWorkSessionCompleted }: PomodoroPanelProps): R
           <p className="text-sm text-muted-foreground">Completed focus sessions: {completedWorkSessions}</p>
         </div>
 
-        <p className="text-center font-[var(--font-heading)] text-6xl font-bold tracking-tight">{formatRemainingTime(secondsLeft)}</p>
+        <p className="text-center font-[var(--font-heading)] text-5xl font-bold tracking-tight sm:text-6xl">{formatRemainingTime(secondsLeft)}</p>
 
         <div className="grid grid-cols-2 gap-2">
           <label className="space-y-1 text-sm">

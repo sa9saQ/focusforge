@@ -33,28 +33,28 @@ export default function Home(): React.ReactElement {
         <ThemeToggle />
       </header>
 
-      <section className="mt-16 grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-end">
-        <div className="space-y-5">
-          <h1 className="font-[var(--font-heading)] text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+      <section className="mt-12 flex flex-col gap-8 md:mt-16 md:flex-row md:items-end">
+        <div className="flex-[1.3] space-y-5">
+          <h1 className="font-[var(--font-heading)] text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-6xl">
             Finish big goals by taking tiny, winnable steps.
           </h1>
-          <p className="max-w-xl text-lg text-muted-foreground">
+          <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
             FocusForge combines AI decomposition, Pomodoro, and gamification so your next action is always obvious.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="h-12 px-6">
-              <Link href="/login">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="h-12 w-full px-6 sm:w-auto">
+              <Link href="/dashboard">
                 Start for free
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="h-12 px-6">
+            <Button asChild variant="outline" size="lg" className="h-12 w-full px-6 sm:w-auto">
               <Link href="/dashboard">Open dashboard</Link>
             </Button>
           </div>
         </div>
 
-        <Card className="border-accent/50 bg-card/80 backdrop-blur">
+        <Card className="flex-1 border-accent/50 bg-card/80 backdrop-blur">
           <CardContent className="space-y-4 p-6">
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-accent-foreground">Daily Loop</p>
             <ol className="space-y-3 text-sm">
@@ -67,7 +67,7 @@ export default function Home(): React.ReactElement {
         </Card>
       </section>
 
-      <section className="mt-12 grid gap-4 md:grid-cols-3">
+      <section className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {features.map((feature) => {
           const Icon = feature.icon;
           return (
@@ -81,6 +81,10 @@ export default function Home(): React.ReactElement {
           );
         })}
       </section>
+
+      <footer className="mt-16 border-t border-border/40 pt-6 pb-8 text-center text-xs text-muted-foreground">
+        <p>© 2026 FocusForge. Built for ADHD minds that think differently.</p>
+      </footer>
     </main>
   );
 }
