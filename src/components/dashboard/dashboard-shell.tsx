@@ -199,7 +199,7 @@ export const DashboardShell = (): React.ReactElement => {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-6 sm:px-6 md:px-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 pb-24 pt-6 sm:px-6 md:px-8 md:pb-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <Link href="/" className="font-[var(--font-heading)] text-2xl font-bold tracking-tight">
@@ -231,7 +231,7 @@ export const DashboardShell = (): React.ReactElement => {
         </div>
 
         <div className="space-y-4">
-          <XpCard xp={profile?.xp ?? 0} dailyXp={profile?.daily_xp ?? 0} dailyXpGoal={100} />
+          <XpCard xp={profile?.xp ?? 0} dailyXp={profile?.daily_xp ?? 0} dailyXpGoal={settings.dailyXpGoal} />
           <StreakCalendar counts={streakCounts} />
           <PomodoroPanel onWorkSessionCompleted={handlePomodoroCompleted} settings={settings} onUpdateSettings={handleUpdateSettings} />
         </div>

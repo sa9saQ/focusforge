@@ -211,7 +211,7 @@ const normalizeSettings = (input: unknown): LocalSettings => {
   return {
     theme: toTheme(input.theme),
     accentColor: toAccentColor(input.accentColor),
-    dailyXpGoal: clampInt(input.dailyXpGoal, 25, 500, DEFAULT_SETTINGS.dailyXpGoal),
+    dailyXpGoal: clampInt(input.dailyXpGoal, 50, 500, DEFAULT_SETTINGS.dailyXpGoal),
     pomodoroWorkMinutes: clampInt(input.pomodoroWorkMinutes, 5, 120, DEFAULT_SETTINGS.pomodoroWorkMinutes),
     pomodoroBreakMinutes: clampInt(input.pomodoroBreakMinutes, 1, 60, DEFAULT_SETTINGS.pomodoroBreakMinutes),
     pomodoroAutoStartNextSession:
