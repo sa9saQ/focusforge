@@ -4,7 +4,18 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "FocusForge",
-  description: "ADHD-friendly task and focus companion",
+  description: "ADHD-friendly task management with AI breakdown, Pomodoro, and gamification",
+  manifest: "/manifest.json",
+  themeColor: "#4a7c59",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "FocusForge",
+  },
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-512.png",
+  },
 };
 
 export default function RootLayout({
