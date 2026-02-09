@@ -6,11 +6,14 @@ import { Loader2 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AiBreakdownPanel } from "@/components/dashboard/ai-breakdown-panel";
 import { PomodoroPanel } from "@/components/dashboard/pomodoro-panel";
+import { StreakCalendar } from "@/components/dashboard/streak-calendar";
 import { TaskPanel } from "@/components/dashboard/task-panel";
 import { XpCard } from "@/components/dashboard/xp-card";
 import { Separator } from "@/components/ui/separator";
 import { POMODORO_COMPLETE_XP, TASK_COMPLETE_XP } from "@/lib/gamification";
 import { awardXp, getOrCreateProfile } from "@/lib/profile";
+import type { DailyCompletionCounts } from "@/lib/storage";
+import { adjustDailyCompletionCount, getDailyCompletionCounts, getDateKeyFromTimestamp } from "@/lib/streaks";
 import { createTask, listTasks, removeTask, updateTaskStatus } from "@/lib/tasks";
 import type { Profile, SubtaskSuggestion, Task } from "@/lib/types";
 
@@ -20,6 +23,8 @@ export const DashboardShell = (): React.ReactElement => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isMutating, setIsMutating] = useState(false);
   const [pendingTaskId, setPendingTaskId] = useState<string | null>(null);
+  const [streakCounts, setStreakCounts] = useState<DailyCompletionCounts>({});
+  const [celebrationEvent, setCelebrationEvent] = useState<{ taskId: string; token: number } | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
 
   const clearStatus = useCallback(() => {
@@ -27,9 +32,10 @@ export const DashboardShell = (): React.ReactElement => {
   }, []);
 
   const refreshData = useCallback(async (): Promise<void> => {
-    const [nextProfile, nextTasks] = await Promise.all([getOrCreateProfile(), listTasks()]);
+    const [nextProfile, nextTasks, nextStreakCounts] = await Promise.all([getOrCreateProfile(), listTasks(), getDailyCompletionCounts()]);
     setProfile(nextProfile);
     setTasks(nextTasks);
+    setStreakCounts(nextStreakCounts);
   }, []);
 
   useEffect(() => {
@@ -67,7 +73,9 @@ export const DashboardShell = (): React.ReactElement => {
         setTasks((previousTasks) => [createdTask, ...previousTasks]);
       } catch (error: unknown) {
         console.error("Create task failed", { error });
-        setStatusMessage(error instanceof Error ? error.message : "Unable to create task.");
+        const message = error instanceof Error ? error.message : "Unable to create task.";
+        setStatusMessage(message);
+        throw new Error(message);
       } finally {
         setIsMutating(false);
       }
@@ -89,6 +97,20 @@ export const DashboardShell = (): React.ReactElement => {
         if (completed && task.status !== "completed") {
           const updatedProfile = await awardXp(task.xp_reward || TASK_COMPLETE_XP);
           setProfile(updatedProfile);
+
+          if (updatedTask.completed_at) {
+            const completionDateKey = getDateKeyFromTimestamp(updatedTask.completed_at);
+            const nextStreakCounts = await adjustDailyCompletionCount(completionDateKey, 1);
+            setStreakCounts(nextStreakCounts);
+          }
+
+          setCelebrationEvent({ taskId: task.id, token: Date.now() });
+        }
+
+        if (!completed && task.status === "completed" && task.completed_at) {
+          const completionDateKey = getDateKeyFromTimestamp(task.completed_at);
+          const nextStreakCounts = await adjustDailyCompletionCount(completionDateKey, -1);
+          setStreakCounts(nextStreakCounts);
         }
       } catch (error: unknown) {
         console.error("Toggle task failed", { error, taskId: task.id, completed });
@@ -191,6 +213,7 @@ export const DashboardShell = (): React.ReactElement => {
             tasks={tasks}
             disabled={isMutating}
             pendingTaskId={pendingTaskId}
+            celebrationEvent={celebrationEvent}
             onCreateTask={handleCreateTask}
             onToggleTask={handleToggleTask}
             onDeleteTask={handleDeleteTask}
@@ -200,6 +223,7 @@ export const DashboardShell = (): React.ReactElement => {
 
         <div className="space-y-4">
           <XpCard xp={profile?.xp ?? 0} />
+          <StreakCalendar counts={streakCounts} />
           <PomodoroPanel onWorkSessionCompleted={handlePomodoroCompleted} />
         </div>
       </section>

@@ -98,3 +98,114 @@
     );
   }
 }
+
+@keyframes task-item-pop {
+  0% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+
+  40% {
+    transform: scale(1.015);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes task-check-pop {
+  0% {
+    transform: scale(0.75);
+  }
+
+  55% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes task-checkmark-pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes task-sparkle-burst {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate(var(--sparkle-x), var(--sparkle-y)) scale(1);
+    opacity: 0;
+  }
+}
+
+@layer utilities {
+  .task-item-celebrating {
+    animation: task-item-pop 420ms ease-out;
+  }
+
+  .task-checkbox-celebrating[data-state="checked"] {
+    animation: task-check-pop 420ms ease-out;
+  }
+
+  .task-checkbox-celebrating[data-state="checked"] svg {
+    animation: task-checkmark-pop 300ms ease-out;
+  }
+
+  .task-sparkle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 6px;
+    width: 6px;
+    border-radius: 9999px;
+    background: oklch(0.83 0.16 138);
+    opacity: 0;
+    pointer-events: none;
+    animation: task-sparkle-burst 560ms ease-out forwards;
+  }
+
+  .task-sparkle-one {
+    --sparkle-x: -18px;
+    --sparkle-y: -14px;
+  }
+
+  .task-sparkle-two {
+    --sparkle-x: 14px;
+    --sparkle-y: -16px;
+  }
+
+  .task-sparkle-three {
+    --sparkle-x: -16px;
+    --sparkle-y: 12px;
+  }
+
+  .task-sparkle-four {
+    --sparkle-x: 16px;
+    --sparkle-y: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-item-celebrating,
+  .task-checkbox-celebrating[data-state="checked"],
+  .task-checkbox-celebrating[data-state="checked"] svg,
+  .task-sparkle {
+    animation: none;
+  }
+}

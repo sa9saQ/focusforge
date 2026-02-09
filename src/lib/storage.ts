@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   tasks: "focusforge_tasks",
   profile: "focusforge_profile",
   settings: "focusforge_settings",
+  streaks: "focusforge_streaks",
 } as const;
 
 export const LOCAL_USER_ID = "local-user";
@@ -14,6 +15,8 @@ export const LOCAL_PROFILE_ID = "local-profile";
 export type LocalSettings = {
   theme: "light" | "dark" | "system";
 };
+
+export type DailyCompletionCounts = Record<string, number>;
 
 export type StorageResult<T> =
   | {
@@ -171,6 +174,17 @@ export const storage = {
       withResult(() => {
         writeValue<LocalSettings>(STORAGE_KEYS.settings, settings);
         return settings;
+      }),
+  },
+  streaks: {
+    get: async (): Promise<StorageResult<DailyCompletionCounts>> =>
+      withResult(() => {
+        return readValue<DailyCompletionCounts>(STORAGE_KEYS.streaks, {});
+      }),
+    set: async (counts: DailyCompletionCounts): Promise<StorageResult<DailyCompletionCounts>> =>
+      withResult(() => {
+        writeValue<DailyCompletionCounts>(STORAGE_KEYS.streaks, counts);
+        return counts;
       }),
   },
 };

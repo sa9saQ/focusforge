@@ -94,18 +94,24 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
 
         {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
 
-        <ul className="space-y-2">
-          {suggestions.map((suggestion, index) => {
-            return (
-              <li key={`${suggestion.title}-${index}`} className="rounded-md border border-border/70 bg-secondary/30 p-3">
-                <p className="text-sm font-medium">{suggestion.title}</p>
-                <p className="text-xs text-muted-foreground">
-                  {suggestion.estimated_minutes} min · Tip: {suggestion.tips}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
+        {suggestions.length === 0 ? (
+          <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
+            Type a task and hit Generate to break it down ✨
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {suggestions.map((suggestion, index) => {
+              return (
+                <li key={`${suggestion.title}-${index}`} className="rounded-md border border-border/70 bg-secondary/30 p-3">
+                  <p className="text-sm font-medium">{suggestion.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {suggestion.estimated_minutes} min · Tip: {suggestion.tips}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
 
         <Button type="button" variant="outline" onClick={() => void saveAll()} disabled={isSaving || suggestions.length === 0}>
           {isSaving ? <Loader2 className="size-4 animate-spin" /> : null}
