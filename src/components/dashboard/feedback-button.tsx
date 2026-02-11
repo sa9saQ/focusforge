@@ -2,18 +2,21 @@
 
 import { useState } from "react";
 import { Loader2, MessageSquarePlus, Send, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type FeedbackType = "bug" | "feature" | "other";
 
-const typeLabels: Record<FeedbackType, { label: string; emoji: string }> = {
-  bug: { label: "Bug report", emoji: "🐛" },
-  feature: { label: "Feature request", emoji: "💡" },
-  other: { label: "Other", emoji: "💬" },
+const typeEmojis: Record<FeedbackType, string> = {
+  bug: "🐛",
+  feature: "💡",
+  other: "💬",
 };
 
 export const FeedbackButton = (): React.ReactElement => {
+  const t = useTranslations("Feedback");
+  const locale = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [feedbackType, setFeedbackType] = useState<FeedbackType>("bug");
   const [message, setMessage] = useState("");
@@ -40,12 +43,16 @@ export const FeedbackButton = (): React.ReactElement => {
           userAgent: navigator.userAgent,
           screenSize: `${window.innerWidth}x${window.innerHeight}`,
           timestamp: new Date().toISOString(),
+          locale,
         }),
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({})) as { message?: string };
-        throw new Error(data.message || "Failed to send feedback.");
+        if (response.status === 429) {
+          throw new Error("RATE_LIMITED");
+        }
+
+        throw new Error("SUBMIT_FAILED");
       }
 
       setSubmitted(true);
@@ -57,15 +64,20 @@ export const FeedbackButton = (): React.ReactElement => {
         setIsOpen(false);
       }, 2000);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      if (err instanceof Error && err.message === "RATE_LIMITED") {
+        setError(t("errors.rateLimited"));
+      } else {
+        setError(t("errors.submit"));
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const typeKeys: FeedbackType[] = ["bug", "feature", "other"];
+
   return (
     <>
-      {/* Floating button */}
       <button
         type="button"
         onClick={() => setIsOpen(true)}
@@ -75,25 +87,23 @@ export const FeedbackButton = (): React.ReactElement => {
           "md:bottom-6 md:right-6",
           isOpen && "hidden",
         )}
-        aria-label="Send feedback"
+        aria-label={t("open")}
       >
         <MessageSquarePlus className="size-5" />
       </button>
 
-      {/* Modal overlay */}
       {isOpen ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
 
           <div className="relative z-10 mx-4 mb-4 w-full max-w-md rounded-2xl border border-border bg-background p-5 shadow-xl sm:mb-0">
-            {/* Header */}
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Send feedback</h3>
+              <h3 className="text-lg font-semibold">{t("title")}</h3>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 className="rounded-md p-1 text-muted-foreground hover:bg-accent"
-                aria-label="Close"
+                aria-label={t("close")}
               >
                 <X className="size-5" />
               </button>
@@ -102,14 +112,13 @@ export const FeedbackButton = (): React.ReactElement => {
             {submitted ? (
               <div className="mt-6 mb-2 text-center">
                 <p className="text-3xl">🎉</p>
-                <p className="mt-2 font-medium">Thanks for your feedback!</p>
-                <p className="text-sm text-muted-foreground">We&apos;ll review it soon.</p>
+                <p className="mt-2 font-medium">{t("success.title")}</p>
+                <p className="text-sm text-muted-foreground">{t("success.description")}</p>
               </div>
             ) : (
               <div className="mt-4 space-y-4">
-                {/* Type selector */}
                 <div className="flex gap-2">
-                  {(Object.keys(typeLabels) as FeedbackType[]).map((type) => (
+                  {typeKeys.map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -121,56 +130,41 @@ export const FeedbackButton = (): React.ReactElement => {
                           : "border-border text-muted-foreground hover:bg-accent/50",
                       )}
                     >
-                      {typeLabels[type].emoji} {typeLabels[type].label}
+                      {typeEmojis[type]} {t(`type.${type}`)}
                     </button>
                   ))}
                 </div>
 
-                {/* Message */}
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder={
-                    feedbackType === "bug"
-                      ? "What happened? What did you expect?"
-                      : feedbackType === "feature"
-                        ? "What would you like to see?"
-                        : "Tell us anything..."
-                  }
+                  placeholder={t(`placeholder.${feedbackType}`)}
                   rows={4}
                   maxLength={2000}
                   className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
 
-                {/* Optional email */}
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email (optional, for follow-up)"
+                  placeholder={t("email")}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
 
                 {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-                {/* Submit */}
                 <Button
                   type="button"
                   onClick={() => void handleSubmit()}
                   disabled={isSubmitting || !message.trim()}
                   className="w-full"
                 >
-                  {isSubmitting ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Send className="size-4" />
-                  )}
-                  {isSubmitting ? "Sending..." : "Send feedback"}
+                  {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+                  {isSubmitting ? t("sending") : t("send")}
                 </Button>
 
-                <p className="text-center text-xs text-muted-foreground">
-                  Your feedback helps us improve FocusForge ❤️
-                </p>
+                <p className="text-center text-xs text-muted-foreground">{t("footer")}</p>
               </div>
             )}
           </div>

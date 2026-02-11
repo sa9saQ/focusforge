@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Pause, Play, RotateCcw, Waves } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   DEFAULT_BREAK_MINUTES,
   DEFAULT_WORK_MINUTES,
@@ -16,11 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-const SOUND_OPTIONS: Array<{ value: AmbientSoundOption; label: string; url: string }> = [
-  { value: "none", label: "None", url: "" },
-  { value: "rain", label: "Rain", url: "https://cdn.example.com/focusforge/rain.mp3" },
-  { value: "lofi", label: "Lo-fi", url: "https://cdn.example.com/focusforge/lofi.mp3" },
-  { value: "forest", label: "Forest", url: "https://cdn.example.com/focusforge/forest.mp3" },
+const SOUND_LIBRARY: Array<{ value: AmbientSoundOption; url: string }> = [
+  { value: "none", url: "" },
+  { value: "rain", url: "https://cdn.example.com/focusforge/rain.mp3" },
+  { value: "lofi", url: "https://cdn.example.com/focusforge/lofi.mp3" },
+  { value: "forest", url: "https://cdn.example.com/focusforge/forest.mp3" },
 ];
 
 type PomodoroPanelProps = {
@@ -35,15 +36,27 @@ const RADIUS = (RING_SIZE - STROKE) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettings }: PomodoroPanelProps): React.ReactElement => {
+  const t = useTranslations("Pomodoro");
   const [workMinutes, setWorkMinutes] = useState(settings.pomodoroWorkMinutes || DEFAULT_WORK_MINUTES);
   const [breakMinutes, setBreakMinutes] = useState(settings.pomodoroBreakMinutes || DEFAULT_BREAK_MINUTES);
   const [phase, setPhase] = useState<PomodoroPhase>("work");
-  const [secondsLeft, setSecondsLeft] = useState(getDurationForPhase("work", settings.pomodoroWorkMinutes, settings.pomodoroBreakMinutes));
+  const [secondsLeft, setSecondsLeft] = useState(
+    getDurationForPhase("work", settings.pomodoroWorkMinutes, settings.pomodoroBreakMinutes),
+  );
   const [isRunning, setIsRunning] = useState(false);
   const [completedWorkSessions, setCompletedWorkSessions] = useState(0);
   const [autoStartNextSession, setAutoStartNextSession] = useState(settings.pomodoroAutoStartNextSession);
   const [ambientSound, setAmbientSound] = useState<AmbientSoundOption>(settings.ambientSound);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const soundOptions = useMemo(
+    () =>
+      SOUND_LIBRARY.map((option) => ({
+        ...option,
+        label: t(`sounds.${option.value}`),
+      })),
+    [t],
+  );
 
   useEffect(() => {
     setWorkMinutes(settings.pomodoroWorkMinutes || DEFAULT_WORK_MINUTES);
@@ -106,7 +119,7 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
     }
 
     const currentAudio = audioRef.current;
-    const selected = SOUND_OPTIONS.find((option) => option.value === ambientSound);
+    const selected = SOUND_LIBRARY.find((option) => option.value === ambientSound);
 
     if (!selected || selected.value === "none") {
       currentAudio.pause();
@@ -131,7 +144,7 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
     };
   }, []);
 
-  const phaseLabel = useMemo(() => (phase === "work" ? "Focus" : "Break"), [phase]);
+  const phaseLabel = useMemo(() => (phase === "work" ? t("phase.focus") : t("phase.break")), [phase, t]);
   const currentSession = Math.min(4, completedWorkSessions + 1);
   const totalPhaseSeconds = getDurationForPhase(phase, workMinutes, breakMinutes);
   const elapsedPercent = totalPhaseSeconds > 0 ? ((totalPhaseSeconds - secondsLeft) / totalPhaseSeconds) * 100 : 0;
@@ -170,7 +183,7 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
   };
 
   const updateAmbientSound = (nextValue: string): void => {
-    const sound = SOUND_OPTIONS.find((option) => option.value === nextValue)?.value ?? "none";
+    const sound = SOUND_LIBRARY.find((option) => option.value === nextValue)?.value ?? "none";
     setAmbientSound(sound);
     void onUpdateSettings({ ambientSound: sound });
   };
@@ -178,13 +191,13 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
   return (
     <Card id="timer">
       <CardHeader>
-        <CardTitle>Pomodoro</CardTitle>
-        <CardDescription>Focus in visible cycles and keep your pace steady.</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between gap-2">
           <Badge variant={phase === "work" ? "default" : "secondary"}>{phaseLabel}</Badge>
-          <p className="text-sm text-muted-foreground">Session {currentSession} of 4</p>
+          <p className="text-sm text-muted-foreground">{t("session", { current: currentSession, total: 4 })}</p>
         </div>
 
         <div className="relative mx-auto flex w-full max-w-[240px] items-center justify-center">
@@ -214,46 +227,46 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
             <p className="font-[var(--font-heading)] text-5xl font-bold tracking-tight">{formatRemainingTime(secondsLeft)}</p>
-            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{phaseLabel} mode</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{t("mode", { phase: phaseLabel })}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <label className="space-y-1 text-sm">
-            Work (min)
+            {t("workMinutes")}
             <Input
               type="number"
               min={5}
               max={120}
               value={workMinutes}
               onChange={(event) => updateWorkMinutes(event.target.value)}
-              aria-label="Set work minutes"
+              aria-label={t("aria.setWorkMinutes")}
             />
           </label>
           <label className="space-y-1 text-sm">
-            Break (min)
+            {t("breakMinutes")}
             <Input
               type="number"
               min={1}
               max={60}
               value={breakMinutes}
               onChange={(event) => updateBreakMinutes(event.target.value)}
-              aria-label="Set break minutes"
+              aria-label={t("aria.setBreakMinutes")}
             />
           </label>
         </div>
 
         <label className="space-y-1 text-sm">
           <span className="inline-flex items-center gap-2">
-            <Waves className="size-4 text-primary" /> Ambient sound
+            <Waves className="size-4 text-primary" /> {t("ambientSound")}
           </span>
           <select
             value={ambientSound}
             onChange={(event) => updateAmbientSound(event.target.value)}
             className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            aria-label="Choose ambient sound"
+            aria-label={t("aria.chooseSound")}
           >
-            {SOUND_OPTIONS.map((option) => (
+            {soundOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -262,7 +275,7 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
         </label>
 
         <div className="flex items-center justify-between rounded-md border border-border/70 bg-secondary/35 px-3 py-2">
-          <p className="text-sm">Auto-start next session</p>
+          <p className="text-sm">{t("autoStart")}</p>
           <button
             type="button"
             onClick={toggleAutoStart}
@@ -276,18 +289,22 @@ export const PomodoroPanel = ({ onWorkSessionCompleted, settings, onUpdateSettin
                 autoStartNextSession ? "translate-x-6" : "translate-x-1"
               }`}
             />
-            <span className="sr-only">Toggle auto start next session</span>
+            <span className="sr-only">{t("aria.toggleAutoStart")}</span>
           </button>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button type="button" onClick={() => setIsRunning((state) => !state)} aria-label={isRunning ? "Pause timer" : "Start timer"}>
+          <Button
+            type="button"
+            onClick={() => setIsRunning((state) => !state)}
+            aria-label={isRunning ? t("aria.pause") : t("aria.start")}
+          >
             {isRunning ? <Pause className="size-4" /> : <Play className="size-4" />}
-            {isRunning ? "Pause" : "Start"}
+            {isRunning ? t("pause") : t("start")}
           </Button>
-          <Button type="button" variant="outline" onClick={resetTimer} aria-label="Reset timer">
+          <Button type="button" variant="outline" onClick={resetTimer} aria-label={t("aria.reset")}>
             <RotateCcw className="size-4" />
-            Reset
+            {t("reset")}
           </Button>
         </div>
       </CardContent>

@@ -131,15 +131,16 @@ html.dark[data-accent="orange"] {
     @apply bg-background text-foreground antialiased;
     font-size: 16px;
     min-height: 100vh;
+    line-height: 1.7;
     background-image:
-      radial-gradient(circle at 0% 0%, oklch(0.92 0.06 300 / 0.35), transparent 38%),
-      radial-gradient(circle at 100% 20%, oklch(0.94 0.03 250 / 0.3), transparent 42%);
+      radial-gradient(circle at 0% 0%, oklch(0.92 0.04 300 / 0.2), transparent 38%),
+      radial-gradient(circle at 100% 20%, oklch(0.94 0.02 250 / 0.15), transparent 42%);
   }
 
   .dark body {
     background-image:
-      radial-gradient(circle at 0% 0%, oklch(0.42 0.11 300 / 0.35), transparent 42%),
-      radial-gradient(circle at 100% 20%, oklch(0.36 0.08 250 / 0.28), transparent 42%);
+      radial-gradient(circle at 0% 0%, oklch(0.42 0.08 300 / 0.2), transparent 42%),
+      radial-gradient(circle at 100% 20%, oklch(0.36 0.06 250 / 0.15), transparent 42%);
   }
 }
 

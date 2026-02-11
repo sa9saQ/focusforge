@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { Task } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,6 +71,7 @@ export const TaskPanel = ({
   onToggleTask,
   onDeleteTask,
 }: TaskPanelProps): React.ReactElement => {
+  const t = useTranslations("TaskPanel");
   const [title, setTitle] = useState("");
   const [showAddedFlash, setShowAddedFlash] = useState(false);
   const [celebratingTaskId, setCelebratingTaskId] = useState<string | null>(null);
@@ -133,15 +135,15 @@ export const TaskPanel = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tasks</CardTitle>
-        <CardDescription>Create, complete, and clear your list.</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <form className="space-y-1" onSubmit={(event) => void submitTask(event)}>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
               ref={inputRef}
-              placeholder="Add a task"
+              placeholder={t("placeholder")}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               disabled={disabled}
@@ -149,7 +151,7 @@ export const TaskPanel = ({
               autoComplete="off"
             />
             <Button type="submit" disabled={disabled || !title.trim()}>
-              Add
+              {t("add")}
             </Button>
           </div>
           <p
@@ -160,7 +162,7 @@ export const TaskPanel = ({
             role="status"
             aria-live="polite"
           >
-            Added!
+            {t("added")}
           </p>
         </form>
 
@@ -170,7 +172,7 @@ export const TaskPanel = ({
               <p className="text-2xl leading-none" aria-hidden>
                 🌱
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">Ready to start? Add your first task above 🚀</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t("empty")}</p>
             </div>
           ) : null}
 
@@ -214,7 +216,7 @@ export const TaskPanel = ({
                   size="icon"
                   onClick={() => void onDeleteTask(task.id)}
                   disabled={disabled || isBusy}
-                  aria-label="Delete task"
+                  aria-label={t("deleteTask")}
                 >
                   {isBusy ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
                 </Button>

@@ -1,0 +1,227 @@
+{
+  "Metadata": {
+    "homeTitle": "FocusForge — ADHD向け生産性アプリ",
+    "dashboardTitle": "ダッシュボード | FocusForge",
+    "loginTitle": "ログイン | FocusForge",
+    "description": "ADHD向けAI搭載生産性アプリ。タスク分解、ポモドーロタイマー、XP＆ストリーク。"
+  },
+  "LocaleSwitcher": {
+    "ariaLabel": "言語切替",
+    "switchTo": "{locale}に切り替え",
+    "localeName": {
+      "en": "English",
+      "ja": "日本語"
+    }
+  },
+  "ThemeToggle": {
+    "toggle": "テーマ切替"
+  },
+  "Landing": {
+    "nav": {
+      "features": "機能",
+      "howItWorks": "使い方",
+      "reviews": "レビュー"
+    },
+    "openApp": "アプリを開く",
+    "badges": {
+      "adhd": "🧠 ADHD対応",
+      "free": "✨ 無料"
+    },
+    "hero": {
+      "title": "集中。完了。レベルアップ。",
+      "description": "AIが大きなタスクを小さなステップに分解。ポモドーロタイマーで集中を維持。XPとストリークでモチベーションをキープ。ADHDの脳に寄り添う設計です。",
+      "primaryCta": "今すぐ始める — 無料",
+      "secondaryCta": "使い方を見る"
+    },
+    "preview": {
+      "missionLabel": "今日のミッション",
+      "missionTitle": "ブログ記事の下書きを書く",
+      "step1": "✅ 要点を整理する（5分）",
+      "step2": "⬜ 導入文を書く（10分）",
+      "step3": "⬜ 具体例とまとめを追加（15分）",
+      "timer": "🍅 ポモドーロ: 残り25:00"
+    },
+    "how": {
+      "heading": "使い方",
+      "subheading": "3つのシンプルなステップ",
+      "stepLabel": "ステップ {index}",
+      "step1": {
+        "title": "タスクを追加",
+        "description": "どんなタスクでもOK。考えすぎなくて大丈夫。"
+      },
+      "step2": {
+        "title": "AIが分解",
+        "description": "AIがタスクを小さく、実行可能なサブタスクに分解。時間の目安もつけてくれます。"
+      },
+      "step3": {
+        "title": "XPを稼いでストリークを作ろう",
+        "description": "タスクを完了してXPを獲得、レベルアップ。ストリークカレンダーで継続を見える化。"
+      }
+    },
+    "features": {
+      "heading": "機能",
+      "subheading": "集中のために設計",
+      "ai": {
+        "title": "AIタスク分解",
+        "description": "タスクを入力するだけで、時間付きのサブタスクに自動分解。もう悩まない。"
+      },
+      "pomodoro": {
+        "title": "ポモドーロタイマー",
+        "description": "作業・休憩時間をカスタマイズ。環境音で集中をサポート。"
+      },
+      "xp": {
+        "title": "XP＆ゲーミフィケーション",
+        "description": "タスク完了とポモドーロセッションでXPを獲得。ストリークを追跡しよう。"
+      }
+    },
+    "testimonials": {
+      "heading": "ユーザーの声",
+      "subheading": "リアルなフィードバック",
+      "item1": {
+        "quote": "やっとADHDの脳にフィットする生産性アプリに出会えた。AI分解が最高。",
+        "author": "— Alex, デザイナー"
+      },
+      "item2": {
+        "quote": "集中ゼロだったのに、ランチ前に3つのタスクを終わらせた。ストリークでモチベが続く。",
+        "author": "— Sam, 学生"
+      },
+      "item3": {
+        "quote": "シンプルで美しくて、ちゃんと使える。Lo-fiサウンド付きポモドーロが最高。",
+        "author": "— Jordan, 開発者"
+      }
+    },
+    "footer": "© 2026 FocusForge. すべてのデータはブラウザ内で処理されます。"
+  },
+  "Login": {
+    "title": "おかえりなさい",
+    "description": "ログインしてストリークを続け、レベルアップしましょう。"
+  },
+  "SignInCard": {
+    "title": "はじめよう",
+    "description": "アカウント不要。データはブラウザに保存されます。",
+    "openDashboard": "ダッシュボードを開く"
+  },
+  "DashboardShell": {
+    "loading": "読み込み中…",
+    "completedTasks": "{completed} / {total} タスク完了",
+    "errors": {
+      "load": "データの読み込みに失敗しました。ページを更新してください。",
+      "createTask": "タスクの作成に失敗しました。",
+      "updateTask": "タスクの更新に失敗しました。",
+      "deleteTask": "タスクの削除に失敗しました。",
+      "saveSuggestions": "提案タスクの保存に失敗しました。",
+      "addPomodoroXp": "ポモドーロXPの追加に失敗しました。"
+    }
+  },
+  "TaskPanel": {
+    "title": "タスク",
+    "description": "タスクを追加してチェックを入れるとXPがもらえます。",
+    "placeholder": "何をする必要がありますか？",
+    "add": "追加",
+    "added": "✓ 追加しました！",
+    "empty": "まだタスクがありません。上から追加しましょう！",
+    "deleteTask": "タスクを削除"
+  },
+  "AiBreakdown": {
+    "title": "AIタスク分解",
+    "description": "大きなタスクを入力すると、AIがサブタスクに分解します。",
+    "placeholder": "例: 研究論文を書く",
+    "generate": "分解する",
+    "empty": "上にタスクを入力して「分解する」を押すと、AI提案が表示されます。",
+    "estimate": "約{minutes}分 • {tip}",
+    "saveAll": "すべてタスクに追加",
+    "errors": {
+      "enterTaskTitle": "タスクのタイトルを入力してください。",
+      "rateLimited": "リクエストが多すぎます。少し待ってください。",
+      "generate": "AI分解に失敗しました。もう一度お試しください。",
+      "save": "タスクの保存に失敗しました。"
+    }
+  },
+  "XpCard": {
+    "title": "進捗",
+    "level": "レベル {level}",
+    "xpValue": "{xp} XP",
+    "toNext": "次まで",
+    "xpToNextLevel": "レベル{level}まであと{amount} XP",
+    "inThisLevel": "このレベル: {current} / {total} XP",
+    "dailyGoalRemaining": "今日あと{amount} XP",
+    "dailyGoalComplete": "🎉 デイリー目標達成！",
+    "streakHint": "ストリークを続けよう！"
+  },
+  "StreakCalendar": {
+    "title": "ストリーク",
+    "streak": "{count}日連続 🔥",
+    "startToday": "今日から始めよう！",
+    "description": "過去28日間のアクティビティ",
+    "daySummary": "{date}: {count}タスク",
+    "dayAria": "{date}、{count}タスク完了",
+    "less": "少ない",
+    "more": "多い"
+  },
+  "Pomodoro": {
+    "title": "ポモドーロタイマー",
+    "description": "インターバルで集中。セッションごとにXP獲得。",
+    "phase": {
+      "focus": "集中",
+      "break": "休憩"
+    },
+    "session": "セッション {current}/{total}",
+    "mode": "{phase}モード",
+    "workMinutes": "作業（分）",
+    "breakMinutes": "休憩（分）",
+    "ambientSound": "環境音",
+    "sounds": {
+      "none": "なし",
+      "rain": "雨",
+      "lofi": "Lo-fi",
+      "forest": "森"
+    },
+    "autoStart": "自動スタート",
+    "start": "スタート",
+    "pause": "一時停止",
+    "reset": "リセット",
+    "aria": {
+      "setWorkMinutes": "作業時間を設定",
+      "setBreakMinutes": "休憩時間を設定",
+      "chooseSound": "環境音を選択",
+      "toggleAutoStart": "自動スタート切替",
+      "start": "タイマー開始",
+      "pause": "タイマー一時停止",
+      "reset": "タイマーリセット"
+    }
+  },
+  "BottomNav": {
+    "tasks": "タスク",
+    "timer": "タイマー",
+    "progress": "進捗",
+    "settings": "設定",
+    "open": "{section}を開く"
+  },
+  "Feedback": {
+    "open": "フィードバックを送る",
+    "title": "フィードバック",
+    "close": "閉じる",
+    "type": {
+      "bug": "バグ",
+      "feature": "機能要望",
+      "other": "その他"
+    },
+    "placeholder": {
+      "bug": "何が起きましたか？期待した動作は？",
+      "feature": "欲しい機能を教えてください。",
+      "other": "何でもお気軽にどうぞ！"
+    },
+    "email": "メールアドレス（任意、返信用）",
+    "send": "送信",
+    "sending": "送信中…",
+    "footer": "フィードバックはFocusForgeの改善に役立てます。",
+    "success": {
+      "title": "ありがとうございます！",
+      "description": "フィードバックが送信されました。"
+    },
+    "errors": {
+      "rateLimited": "リクエストが多すぎます。少し待ってください。",
+      "submit": "送信に失敗しました。もう一度お試しください。"
+    }
+  }
+}

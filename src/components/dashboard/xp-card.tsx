@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Flame, Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { getXpProgress } from "@/lib/gamification";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -18,6 +19,7 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export const XpCard = ({ xp, dailyXp, dailyXpGoal, celebrationToken = null }: XpCardProps): React.ReactElement => {
+  const t = useTranslations("XpCard");
   const [isCelebrating, setIsCelebrating] = useState(false);
   const { level, currentLevelXp, nextLevelXp, progressPercent } = useMemo(() => getXpProgress(xp), [xp]);
   const xpToNextLevel = Math.max(0, nextLevelXp - xp);
@@ -40,16 +42,16 @@ export const XpCard = ({ xp, dailyXp, dailyXpGoal, celebrationToken = null }: Xp
   }, [celebrationToken]);
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card id="progress" className="relative overflow-hidden">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-xl">Progress</CardTitle>
+        <CardTitle className="text-xl">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between rounded-md bg-secondary/50 px-3 py-2">
           <p className="flex items-center gap-2 text-sm font-medium">
-            <Star className="size-4 text-primary" /> Level {level}
+            <Star className="size-4 text-primary" /> {t("level", { level })}
           </p>
-          <p className="text-sm text-muted-foreground">{xp} XP</p>
+          <p className="text-sm text-muted-foreground">{t("xpValue", { xp })}</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -80,25 +82,23 @@ export const XpCard = ({ xp, dailyXp, dailyXpGoal, celebrationToken = null }: Xp
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
               <p className="text-xl font-bold">{Math.round(progressPercent)}%</p>
-              <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">to next</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{t("toNext")}</p>
             </div>
           </div>
 
           <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{t("xpToNextLevel", { amount: xpToNextLevel, level: level + 1 })}</p>
             <p className="text-sm text-muted-foreground">
-              {xpToNextLevel} XP to reach Level {level + 1}.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {xp - currentLevelXp} / {nextLevelXp - currentLevelXp} XP in this level
+              {t("inThisLevel", { current: xp - currentLevelXp, total: nextLevelXp - currentLevelXp })}
             </p>
             <p className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1.5 text-xs font-semibold text-primary">
-              {dailyRemaining > 0 ? `${dailyRemaining} XP to daily goal` : "Daily XP goal complete"}
+              {dailyRemaining > 0 ? t("dailyGoalRemaining", { amount: dailyRemaining }) : t("dailyGoalComplete")}
             </p>
           </div>
         </div>
 
         <p className="flex items-center gap-2 text-sm font-medium text-accent-foreground break-words">
-          <Flame className="size-4 shrink-0 text-accent-foreground" /> Keep your streak by finishing one task today.
+          <Flame className="size-4 shrink-0 text-accent-foreground" /> {t("streakHint")}
         </p>
 
         {isCelebrating ? (

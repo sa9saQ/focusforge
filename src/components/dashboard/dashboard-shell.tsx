@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AiBreakdownPanel } from "@/components/dashboard/ai-breakdown-panel";
 import { PomodoroPanel } from "@/components/dashboard/pomodoro-panel";
@@ -10,6 +11,7 @@ import { StreakCalendar } from "@/components/dashboard/streak-calendar";
 import { TaskPanel } from "@/components/dashboard/task-panel";
 import { XpCard } from "@/components/dashboard/xp-card";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "@/i18n/navigation";
 import { POMODORO_COMPLETE_XP, TASK_COMPLETE_XP } from "@/lib/gamification";
 import { awardXp, getOrCreateProfile } from "@/lib/profile";
 import type { DailyCompletionCounts, LocalSettings } from "@/lib/storage";
@@ -19,6 +21,7 @@ import { createTask, listTasks, removeTask, updateTaskStatus } from "@/lib/tasks
 import type { Profile, SubtaskSuggestion, Task } from "@/lib/types";
 
 export const DashboardShell = (): React.ReactElement => {
+  const t = useTranslations("DashboardShell");
   const [profile, setProfile] = useState<Profile | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -34,18 +37,26 @@ export const DashboardShell = (): React.ReactElement => {
   }, []);
 
   const refreshData = useCallback(async (): Promise<void> => {
-    const [nextProfile, nextTasks, nextStreakCounts, settingsResult] = await Promise.all([getOrCreateProfile(), listTasks(), getDailyCompletionCounts(), storage.settings.get()]);
+    const [nextProfile, nextTasks, nextStreakCounts, settingsResult] = await Promise.all([
+      getOrCreateProfile(),
+      listTasks(),
+      getDailyCompletionCounts(),
+      storage.settings.get(),
+    ]);
     setProfile(nextProfile);
     setTasks(nextTasks);
     setStreakCounts(nextStreakCounts);
     if (settingsResult.data) setSettings(settingsResult.data);
   }, []);
 
-  const handleUpdateSettings = useCallback(async (patch: Partial<LocalSettings>): Promise<void> => {
-    const next = { ...settings, ...patch };
-    await storage.settings.set(next);
-    setSettings(next);
-  }, [settings]);
+  const handleUpdateSettings = useCallback(
+    async (patch: Partial<LocalSettings>): Promise<void> => {
+      const next = { ...settings, ...patch };
+      await storage.settings.set(next);
+      setSettings(next);
+    },
+    [settings],
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -56,7 +67,7 @@ export const DashboardShell = (): React.ReactElement => {
       } catch (error: unknown) {
         console.error("Dashboard initialization failed", { error });
         if (isMounted) {
-          setStatusMessage(error instanceof Error ? error.message : "Unable to load dashboard.");
+          setStatusMessage(t("errors.load"));
         }
       } finally {
         if (isMounted) {
@@ -70,7 +81,7 @@ export const DashboardShell = (): React.ReactElement => {
     return () => {
       isMounted = false;
     };
-  }, [refreshData]);
+  }, [refreshData, t]);
 
   const handleCreateTask = useCallback(
     async (title: string): Promise<void> => {
@@ -82,14 +93,14 @@ export const DashboardShell = (): React.ReactElement => {
         setTasks((previousTasks) => [createdTask, ...previousTasks]);
       } catch (error: unknown) {
         console.error("Create task failed", { error });
-        const message = error instanceof Error ? error.message : "Unable to create task.";
+        const message = t("errors.createTask");
         setStatusMessage(message);
         throw new Error(message);
       } finally {
         setIsMutating(false);
       }
     },
-    [clearStatus],
+    [clearStatus, t],
   );
 
   const handleToggleTask = useCallback(
@@ -101,7 +112,9 @@ export const DashboardShell = (): React.ReactElement => {
         const nextStatus = completed ? "completed" : "pending";
         const updatedTask = await updateTaskStatus({ taskId: task.id, status: nextStatus });
 
-        setTasks((previousTasks) => previousTasks.map((existingTask) => (existingTask.id === updatedTask.id ? updatedTask : existingTask)));
+        setTasks((previousTasks) =>
+          previousTasks.map((existingTask) => (existingTask.id === updatedTask.id ? updatedTask : existingTask)),
+        );
 
         if (completed && task.status !== "completed") {
           const updatedProfile = await awardXp(task.xp_reward || TASK_COMPLETE_XP);
@@ -117,7 +130,6 @@ export const DashboardShell = (): React.ReactElement => {
         }
 
         if (!completed && task.status === "completed") {
-          // Deduct XP when uncompleting a task
           const xpToDeduct = task.xp_reward || TASK_COMPLETE_XP;
           const deductedProfile = await awardXp(-xpToDeduct);
           setProfile(deductedProfile);
@@ -130,12 +142,12 @@ export const DashboardShell = (): React.ReactElement => {
         }
       } catch (error: unknown) {
         console.error("Toggle task failed", { error, taskId: task.id, completed });
-        setStatusMessage(error instanceof Error ? error.message : "Unable to update task.");
+        setStatusMessage(t("errors.updateTask"));
       } finally {
         setPendingTaskId(null);
       }
     },
-    [clearStatus],
+    [clearStatus, t],
   );
 
   const handleDeleteTask = useCallback(
@@ -148,12 +160,12 @@ export const DashboardShell = (): React.ReactElement => {
         setTasks((previousTasks) => previousTasks.filter((task) => task.id !== taskId));
       } catch (error: unknown) {
         console.error("Delete task failed", { error, taskId });
-        setStatusMessage(error instanceof Error ? error.message : "Unable to delete task.");
+        setStatusMessage(t("errors.deleteTask"));
       } finally {
         setPendingTaskId(null);
       }
     },
-    [clearStatus],
+    [clearStatus, t],
   );
 
   const handleCreateSuggestedTasks = useCallback(
@@ -174,12 +186,12 @@ export const DashboardShell = (): React.ReactElement => {
         setTasks((previousTasks) => [...created, ...previousTasks]);
       } catch (error: unknown) {
         console.error("Create suggested tasks failed", { error });
-        setStatusMessage(error instanceof Error ? error.message : "Unable to save suggested tasks.");
+        setStatusMessage(t("errors.saveSuggestions"));
       } finally {
         setIsMutating(false);
       }
     },
-    [clearStatus],
+    [clearStatus, t],
   );
 
   const handlePomodoroCompleted = useCallback(async (): Promise<void> => {
@@ -188,9 +200,9 @@ export const DashboardShell = (): React.ReactElement => {
       setProfile(updatedProfile);
     } catch (error: unknown) {
       console.error("Award pomodoro XP failed", { error });
-      setStatusMessage(error instanceof Error ? error.message : "Unable to add XP for pomodoro.");
+      setStatusMessage(t("errors.addPomodoroXp"));
     }
-  }, []);
+  }, [t]);
 
   const totalTasks = useMemo(() => tasks.length, [tasks]);
   const completedTasks = useMemo(() => tasks.filter((task) => task.status === "completed").length, [tasks]);
@@ -199,7 +211,7 @@ export const DashboardShell = (): React.ReactElement => {
     return (
       <main className="flex min-h-screen items-center justify-center">
         <p className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="size-4 animate-spin" /> Loading dashboard...
+          <Loader2 className="size-4 animate-spin" /> {t("loading")}
         </p>
       </main>
     );
@@ -213,15 +225,20 @@ export const DashboardShell = (): React.ReactElement => {
             FocusForge
           </Link>
           <p className="text-sm text-muted-foreground">
-            {completedTasks}/{totalTasks} tasks completed
+            {t("completedTasks", { completed: completedTasks, total: totalTasks })}
           </p>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <ThemeToggle />
+        </div>
       </header>
 
       <Separator className="my-4" />
 
-      {statusMessage ? <p className="mb-3 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">{statusMessage}</p> : null}
+      {statusMessage ? (
+        <p className="mb-3 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">{statusMessage}</p>
+      ) : null}
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-4 md:col-span-2 lg:col-span-2">

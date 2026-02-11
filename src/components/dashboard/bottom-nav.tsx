@@ -1,38 +1,35 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { BarChart3, ListTodo, Settings, Timer } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   {
     key: "tasks",
-    label: "Tasks",
     icon: ListTodo,
     dashboardHref: "/dashboard#tasks",
   },
   {
     key: "timer",
-    label: "Timer",
     icon: Timer,
     dashboardHref: "/dashboard#timer",
   },
   {
     key: "progress",
-    label: "Progress",
     icon: BarChart3,
     dashboardHref: "/dashboard#progress",
   },
   {
     key: "settings",
-    label: "Settings",
     icon: Settings,
     dashboardHref: "/dashboard/settings",
   },
 ] as const;
 
 export const BottomNav = (): React.ReactElement => {
+  const t = useTranslations("BottomNav");
   const pathname = usePathname();
   const isSettingsRoute = pathname.startsWith("/dashboard/settings");
 
@@ -42,6 +39,7 @@ export const BottomNav = (): React.ReactElement => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.key === "settings" ? isSettingsRoute : !isSettingsRoute && item.key === "tasks";
+          const label = t(item.key);
 
           return (
             <li key={item.key}>
@@ -51,10 +49,10 @@ export const BottomNav = (): React.ReactElement => {
                   "flex h-11 flex-col items-center justify-center rounded-lg text-[11px] font-medium transition-colors",
                   isActive ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
                 )}
-                aria-label={`Open ${item.label}`}
+                aria-label={t("open", { section: label })}
               >
                 <Icon className="mb-0.5 size-4" />
-                <span>{item.label}</span>
+                <span>{label}</span>
               </Link>
             </li>
           );

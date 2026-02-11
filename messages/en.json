@@ -1,0 +1,227 @@
+{
+  "Metadata": {
+    "homeTitle": "FocusForge — ADHD-Friendly Productivity",
+    "dashboardTitle": "Dashboard | FocusForge",
+    "loginTitle": "Sign In | FocusForge",
+    "description": "AI-powered productivity app for ADHD. Task breakdown, Pomodoro timer, XP & streaks."
+  },
+  "LocaleSwitcher": {
+    "ariaLabel": "Language switcher",
+    "switchTo": "Switch to {locale}",
+    "localeName": {
+      "en": "English",
+      "ja": "日本語"
+    }
+  },
+  "ThemeToggle": {
+    "toggle": "Toggle theme"
+  },
+  "Landing": {
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "reviews": "Reviews"
+    },
+    "openApp": "Open App",
+    "badges": {
+      "adhd": "🧠 ADHD-Friendly",
+      "free": "✨ Free"
+    },
+    "hero": {
+      "title": "Focus. Finish. Level Up.",
+      "description": "AI breaks big tasks into tiny steps. A Pomodoro timer keeps you on track. XP and streaks keep you coming back. Built for ADHD brains.",
+      "primaryCta": "Start Now — Free",
+      "secondaryCta": "See How It Works"
+    },
+    "preview": {
+      "missionLabel": "TODAY'S MISSION",
+      "missionTitle": "Write blog post draft",
+      "step1": "✅ Outline key points (5 min)",
+      "step2": "⬜ Write intro paragraph (10 min)",
+      "step3": "⬜ Add examples & conclusion (15 min)",
+      "timer": "🍅 Pomodoro: 25:00 remaining"
+    },
+    "how": {
+      "heading": "How It Works",
+      "subheading": "3 simple steps",
+      "stepLabel": "Step {index}",
+      "step1": {
+        "title": "Add a Task",
+        "description": "Type any task — big or small. No overthinking required."
+      },
+      "step2": {
+        "title": "AI Breaks It Down",
+        "description": "Our AI splits your task into small, actionable subtasks with time estimates."
+      },
+      "step3": {
+        "title": "Earn XP & Build Streaks",
+        "description": "Complete tasks, earn XP, level up. The streak calendar keeps you accountable."
+      }
+    },
+    "features": {
+      "heading": "Features",
+      "subheading": "Built for focus",
+      "ai": {
+        "title": "AI Task Breakdown",
+        "description": "Paste any task and get clear, timed subtasks. No more paralysis."
+      },
+      "pomodoro": {
+        "title": "Pomodoro Timer",
+        "description": "Customizable work/break intervals with ambient sounds. Stay in the zone."
+      },
+      "xp": {
+        "title": "XP & Gamification",
+        "description": "Earn XP for every completed task and Pomodoro session. Track your streak."
+      }
+    },
+    "testimonials": {
+      "heading": "What People Say",
+      "subheading": "Real feedback",
+      "item1": {
+        "quote": "Finally a productivity app that gets my ADHD brain. The AI breakdown is a game-changer.",
+        "author": "— Alex, Designer"
+      },
+      "item2": {
+        "quote": "I went from zero focus to finishing 3 tasks before lunch. The streaks keep me motivated.",
+        "author": "— Sam, Student"
+      },
+      "item3": {
+        "quote": "Simple, beautiful, and it actually works. I love the Pomodoro timer with lo-fi sounds.",
+        "author": "— Jordan, Developer"
+      }
+    },
+    "footer": "© 2026 FocusForge. All data stays in your browser."
+  },
+  "Login": {
+    "title": "Welcome back",
+    "description": "Sign in to continue your streak and keep leveling up."
+  },
+  "SignInCard": {
+    "title": "Get Started",
+    "description": "No account needed. Your data stays in your browser.",
+    "openDashboard": "Open Dashboard"
+  },
+  "DashboardShell": {
+    "loading": "Loading…",
+    "completedTasks": "{completed} / {total} tasks done",
+    "errors": {
+      "load": "Failed to load data. Please refresh.",
+      "createTask": "Could not create task.",
+      "updateTask": "Could not update task.",
+      "deleteTask": "Could not delete task.",
+      "saveSuggestions": "Could not save suggested tasks.",
+      "addPomodoroXp": "Could not add Pomodoro XP."
+    }
+  },
+  "TaskPanel": {
+    "title": "Tasks",
+    "description": "Add tasks and check them off to earn XP.",
+    "placeholder": "What do you need to do?",
+    "add": "Add",
+    "added": "✓ Added!",
+    "empty": "No tasks yet. Add one above!",
+    "deleteTask": "Delete task"
+  },
+  "AiBreakdown": {
+    "title": "AI Task Breakdown",
+    "description": "Paste a big task and let AI split it into subtasks.",
+    "placeholder": "e.g. Write a research paper",
+    "generate": "Break Down",
+    "empty": "Enter a task above and hit Break Down to see AI suggestions.",
+    "estimate": "~{minutes} min • {tip}",
+    "saveAll": "Add All to Tasks",
+    "errors": {
+      "enterTaskTitle": "Please enter a task title.",
+      "rateLimited": "Too many requests. Please wait a moment.",
+      "generate": "AI breakdown failed. Please try again.",
+      "save": "Could not save tasks."
+    }
+  },
+  "XpCard": {
+    "title": "Progress",
+    "level": "Level {level}",
+    "xpValue": "{xp} XP",
+    "toNext": "to next",
+    "xpToNextLevel": "{amount} XP to Level {level}",
+    "inThisLevel": "{current} / {total} XP in this level",
+    "dailyGoalRemaining": "{amount} XP left today",
+    "dailyGoalComplete": "🎉 Daily goal reached!",
+    "streakHint": "Keep your streak going!"
+  },
+  "StreakCalendar": {
+    "title": "Streak",
+    "streak": "{count}-day streak 🔥",
+    "startToday": "Start today!",
+    "description": "Last 28 days of activity",
+    "daySummary": "{date}: {count} tasks",
+    "dayAria": "{date}, {count} tasks completed",
+    "less": "Less",
+    "more": "More"
+  },
+  "Pomodoro": {
+    "title": "Pomodoro Timer",
+    "description": "Focus in intervals. Earn XP per session.",
+    "phase": {
+      "focus": "Focus",
+      "break": "Break"
+    },
+    "session": "Session {current}/{total}",
+    "mode": "{phase} mode",
+    "workMinutes": "Work (min)",
+    "breakMinutes": "Break (min)",
+    "ambientSound": "Ambient Sound",
+    "sounds": {
+      "none": "None",
+      "rain": "Rain",
+      "lofi": "Lo-fi",
+      "forest": "Forest"
+    },
+    "autoStart": "Auto-start next",
+    "start": "Start",
+    "pause": "Pause",
+    "reset": "Reset",
+    "aria": {
+      "setWorkMinutes": "Set work duration",
+      "setBreakMinutes": "Set break duration",
+      "chooseSound": "Choose ambient sound",
+      "toggleAutoStart": "Toggle auto-start",
+      "start": "Start timer",
+      "pause": "Pause timer",
+      "reset": "Reset timer"
+    }
+  },
+  "BottomNav": {
+    "tasks": "Tasks",
+    "timer": "Timer",
+    "progress": "Progress",
+    "settings": "Settings",
+    "open": "Open {section}"
+  },
+  "Feedback": {
+    "open": "Send Feedback",
+    "title": "Send Feedback",
+    "close": "Close",
+    "type": {
+      "bug": "Bug",
+      "feature": "Feature",
+      "other": "Other"
+    },
+    "placeholder": {
+      "bug": "What happened? What did you expect?",
+      "feature": "Describe the feature you'd like.",
+      "other": "Tell us anything!"
+    },
+    "email": "Email (optional, for follow-up)",
+    "send": "Send",
+    "sending": "Sending…",
+    "footer": "Your feedback helps us improve FocusForge.",
+    "success": {
+      "title": "Thank you!",
+      "description": "Your feedback has been sent."
+    },
+    "errors": {
+      "rateLimited": "Too many requests. Please wait.",
+      "submit": "Failed to send. Please try again."
+    }
+  }
+}

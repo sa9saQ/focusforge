@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import type { SubtaskSuggestion } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,8 @@ type AiBreakdownPanelProps = {
 };
 
 export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelProps): React.ReactElement => {
+  const t = useTranslations("AiBreakdown");
+  const locale = useLocale();
   const [taskTitle, setTaskTitle] = useState("");
   const [suggestions, setSuggestions] = useState<SubtaskSuggestion[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -21,7 +24,7 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
   const generate = async (): Promise<void> => {
     const normalizedTitle = taskTitle.trim();
     if (!normalizedTitle) {
-      setErrorMessage("Enter a task title first.");
+      setErrorMessage(t("errors.enterTaskTitle"));
       return;
     }
 
@@ -34,20 +37,27 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ taskTitle: normalizedTitle }),
+        body: JSON.stringify({ taskTitle: normalizedTitle, locale }),
       });
 
-      const payload = (await response.json()) as { subtasks?: SubtaskSuggestion[]; message?: string };
+      const payload = (await response.json()) as { subtasks?: SubtaskSuggestion[] };
 
       if (!response.ok || !payload.subtasks) {
-        throw new Error(payload.message ?? "Failed to generate suggestions.");
+        if (response.status === 429) {
+          throw new Error("RATE_LIMITED");
+        }
+
+        throw new Error("GENERATE_FAILED");
       }
 
       setSuggestions(payload.subtasks);
     } catch (error: unknown) {
       console.error("Generate AI subtasks failed", { error });
-      const message = error instanceof Error ? error.message : "Unable to generate subtasks.";
-      setErrorMessage(message);
+      if (error instanceof Error && error.message === "RATE_LIMITED") {
+        setErrorMessage(t("errors.rateLimited"));
+      } else {
+        setErrorMessage(t("errors.generate"));
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -65,8 +75,7 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
       await onCreateSuggestedTasks(suggestions);
     } catch (error: unknown) {
       console.error("Persist generated subtasks failed", { error });
-      const message = error instanceof Error ? error.message : "Unable to save generated subtasks.";
-      setErrorMessage(message);
+      setErrorMessage(t("errors.save"));
     } finally {
       setIsSaving(false);
     }
@@ -75,29 +84,27 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI Breakdown</CardTitle>
-        <CardDescription>Break any task into 3-5 small, actionable steps.</CardDescription>
+        <CardTitle>{t("title")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={taskTitle}
             onChange={(event) => setTaskTitle(event.target.value)}
-            placeholder="e.g. Write my project proposal"
+            placeholder={t("placeholder")}
             maxLength={120}
           />
           <Button type="button" onClick={() => void generate()} disabled={isGenerating}>
             {isGenerating ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-            Generate
+            {t("generate")}
           </Button>
         </div>
 
         {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
 
         {suggestions.length === 0 ? (
-          <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">
-            Type a task and hit Generate to break it down ✨
-          </p>
+          <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted-foreground">{t("empty")}</p>
         ) : (
           <ul className="space-y-2">
             {suggestions.map((suggestion, index) => {
@@ -105,7 +112,7 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
                 <li key={`${suggestion.title}-${index}`} className="rounded-md border border-border/70 bg-secondary/30 p-3">
                   <p className="text-sm font-medium">{suggestion.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    {suggestion.estimated_minutes} min · Tip: {suggestion.tips}
+                    {t("estimate", { minutes: suggestion.estimated_minutes, tip: suggestion.tips })}
                   </p>
                 </li>
               );
@@ -115,7 +122,7 @@ export const AiBreakdownPanel = ({ onCreateSuggestedTasks }: AiBreakdownPanelPro
 
         <Button type="button" variant="outline" onClick={() => void saveAll()} disabled={isSaving || suggestions.length === 0}>
           {isSaving ? <Loader2 className="size-4 animate-spin" /> : null}
-          Save all as tasks
+          {t("saveAll")}
         </Button>
       </CardContent>
     </Card>
